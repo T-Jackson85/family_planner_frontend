@@ -10,7 +10,7 @@ const EventDetail = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/events/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/events/${id}`);
         setEvent(response.data);
       } catch (error) {
         console.error("Error fetching event:", error);
@@ -25,7 +25,7 @@ const EventDetail = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/events/${id}`);
+      await axios.delete(`http://localhost:5000/api/events/${id}`);
       alert("Event deleted successfully!");
       navigate("/events");
     } catch (error) {

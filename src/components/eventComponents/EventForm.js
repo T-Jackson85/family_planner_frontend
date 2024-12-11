@@ -15,7 +15,7 @@ const EventForm = () => {
     if (id) {
       const fetchEvent = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/api/events/${id}`);
+          const response = await axios.get(`http://localhost:5000/api/events/${id}`);
           setEvent(response.data);
         } catch (error) {
           console.error("Error fetching event:", error);
@@ -77,6 +77,15 @@ const EventForm = () => {
             type="text"
             name="location"
             value={event.location}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>host</label>
+          <input
+            type="text"
+            name="host"
+            value={event.host}
             onChange={handleChange}
           />
         </div>
