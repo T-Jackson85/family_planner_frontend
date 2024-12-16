@@ -1,0 +1,23 @@
+.homepage {
+    padding: 20px;
+  }
+  
+  .calendar-section,
+  .tasks-section,
+  .expense-tracker-section,
+  .member-list-section {
+    margin-bottom: 20px;
+  }
+  
+  .calendar-event-indicator {
+    background-color: #2196f3;
+    color: white;
+    font-size: 0.8rem;
+    padding: 2px 4px;
+    border-radius: 50%;
+  }
+  
+  .error-message {
+    color: red;
+  }
+  

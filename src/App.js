@@ -16,6 +16,8 @@ import GroupForm from "./components/groupComponents/GroupForm";
 import TasksList from "./components/taskComponents/TasksList";
 import TaskDetails from "./components/taskComponents/TaskDetails";
 import TaskForm from "./components/taskComponents/TaskForm";
+import LoginForm from "./LoginPage";
+import Homepage from "./homepage";
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
         <Route path="/tasks/:id" element={<TaskDetails />} />
         <Route path="/add-task" element={<TaskForm />} />
         <Route path="/edit-task/:id" element={<TaskForm />} />
+        <Route path="/users/login" element={<LoginForm />} />
+        <Route path="/profile/:id" element={<Homepage />} />
       </Routes>
     </Router>
   );

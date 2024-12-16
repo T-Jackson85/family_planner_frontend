@@ -44,6 +44,9 @@ function UserForm() {
   };
 
   return (
+    
+    <div>
+      <h1>Register Here!</h1>
     <form onSubmit={handleSubmit}>
       <input
         name="firstName"
@@ -87,6 +90,7 @@ function UserForm() {
       />
       <button type="submit">Save</button>
     </form>
+   </div> 
   );
 }
 
