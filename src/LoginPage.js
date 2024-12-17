@@ -4,7 +4,6 @@ import axios from "axios";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [isSignUp, setIsSignUp] = useState(false); // Toggle between login and sign-up
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -18,16 +17,10 @@ const LoginPage = () => {
     setError(null);
 
     try {
-      if (isSignUp) {
-        // Redirect to UserForm.js for new user setup
-        navigate("/users/new", { state: { email: formData.email } });
-      } else {
-        // Attempt to log in
-        const response = await axios.post("http://localhost:5000/api/auth/login", formData); // Backend login endpoint
-        const { token, user } = response.data; // Assuming token and user details in response
-        localStorage.setItem("authToken", token); // Save token for session management
-        navigate("/homepage", { state: { user } }); // Redirect to homepage
-      }
+      const response = await axios.post("http://localhost:5000/api/auth/login", formData); // Backend login endpoint
+      const { token, user } = response.data; // Assuming token and user details in response
+      localStorage.setItem("authToken", token); // Save token for session management
+      navigate("/homepage", { state: { user } }); // Redirect to homepage
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred. Please try again.");
     }
@@ -35,7 +28,7 @@ const LoginPage = () => {
 
   return (
     <div style={styles.container}>
-      <h1>{isSignUp ? "Sign Up" : "Log In"} to FamLink</h1>
+      <h1>Log In to FamLink</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <label style={styles.label}>
           Email:
@@ -60,18 +53,16 @@ const LoginPage = () => {
           />
         </label>
         {error && <p style={styles.error}>{error}</p>}
-        <button type="submit" style={styles.button}>
-          {isSignUp ? "Sign Up" : "Log In"}
-        </button>
+        <button type="submit" style={styles.button}>Log In</button>
       </form>
       <p style={styles.toggleText}>
-        {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+        Don't have an account?{" "}
         <button
           type="button"
-          onClick={() => setIsSignUp(!isSignUp)}
+          onClick={() => navigate("/signup")}
           style={styles.toggleButton}
         >
-          {isSignUp ? "Log In" : "Sign Up"}
+          Sign Up
         </button>
       </p>
     </div>
