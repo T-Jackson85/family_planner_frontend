@@ -38,6 +38,7 @@ const EventDetail = () => {
   return (
     <div>
       <h1>{event.title}</h1>
+      <p>{event.description}</p>
       <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
       <p><strong>Location:</strong> {event.location}</p>
       <Link to={`/events/edit/${id}`}>Edit</Link>

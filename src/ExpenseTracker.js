@@ -1,16 +1,14 @@
-const ExpenseTracker = ({ expenses }) => {
-    return (
-      <div className="expense-tracker">
-        {expenses.map((expense) => (
-          <div key={expense.id} className="expense-item">
-            <p>{expense.description}</p>
-            <p>Amount: ${expense.amount}</p>
-            <p>Due: {new Date(expense.dueDate).toDateString()}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
-  
-  export default ExpenseTracker;
-  
+import React from 'react';
+
+const ExpenseTracker = ({ expenses }) => (
+  <ul>
+    {expenses.map((expense) => (
+      <li key={expense.id}>
+        <strong>{expense.description || 'No description'}</strong>: ${expense.amount} -{' '}
+        {expense.paid ? 'Paid' : 'Unpaid'}
+      </li>
+    ))}
+  </ul>
+);
+
+export default ExpenseTracker;

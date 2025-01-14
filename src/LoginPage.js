@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "./api/api"; // Import the customized Axios instance
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -17,10 +17,15 @@ const LoginPage = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", formData); // Backend login endpoint
-      const { token, user } = response.data; // Assuming token and user details in response
-      localStorage.setItem("authToken", token); // Save token for session management
-      navigate("/homepage", { state: { user } }); // Redirect to homepage
+      const response = await api.post("/auth/login", formData); // Use the `api` instance
+      const { accessToken, refreshToken } = response.data;
+
+      // Save tokens and expiry in localStorage
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("tokenExpiry", Date.now() + 15 * 60 * 1000); // 15 minutes expiry
+
+      navigate("/homepage"); // Redirect to homepage
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred. Please try again.");
     }

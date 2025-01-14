@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const UserProfile = () => {
   const { id } = useParams(); // Extract user ID from the route parameter
@@ -20,20 +23,34 @@ const UserProfile = () => {
   }, [id]);
 
   if (!user) {
-    return <div>Loading user profile...</div>;
+    return <Typography variant="h6" align="center">Loading user profile...</Typography>;
   }
 
   return (
-    <div style={styles.profileContainer}>
-      <img
-        src={user.avatar || '/default-avatar.png'}
-        alt={user.name || 'User Avatar'}
-        style={styles.avatar}
-      />
-      <h2 style={styles.name}>{user.name || 'Unknown User'}</h2>
-      <p style={styles.email}>{user.email}</p>
-      <p style={styles.location}>{user.location || 'Location not available'}</p>
-    </div>
+    <Box sx={styles.profileContainer}>
+      <Avatar
+        alt={user.firstName || 'User Avatar'}
+        src={user.avatar || ''}
+        sx={{ width: 150, height: 150, marginBottom: 2 }}
+      >
+        {(!user.avatar && user.firstName) ? user.firstName[0].toUpperCase() : ''}
+      </Avatar>
+      <Typography variant="h4" sx={styles.name}>
+        {user.firstName || 'Unknown User'}
+      </Typography>
+      <Typography variant="body1" sx={styles.email}>
+        {user.email || 'Email not available'}
+      </Typography>
+      <Typography variant="body2" sx={styles.location}>
+        {user.location || 'Location not available'}
+      </Typography>
+      <Typography variant="body2" sx={styles.birthday}>
+        {user.birthday || 'Birthday not available'}
+      </Typography>
+      <Typography variant="body2" sx={styles.phone}>
+        {user.phone || 'Phone not available'}
+      </Typography>
+    </Box>
   );
 };
 
@@ -44,23 +61,31 @@ const styles = {
     alignItems: 'center',
     textAlign: 'center',
     padding: '20px',
-  },
-  avatar: {
-    width: '150px',
-    height: '150px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    border: '3px solid #ddd',
+    backgroundColor: '#f9f9f9',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    maxWidth: '400px',
+    margin: 'auto',
+    marginTop: '20px',
   },
   name: {
-    marginTop: '15px',
-    fontSize: '24px',
+    marginTop: '10px',
+    marginBottom: '10px',
   },
   email: {
     color: '#555',
+    marginBottom: '5px',
   },
   location: {
     color: '#777',
+    marginBottom: '5px',
+  },
+  birthday: {
+    color: '#555',
+    marginBottom: '5px',
+  },
+  phone: {
+    color: '#555',
   },
 };
 

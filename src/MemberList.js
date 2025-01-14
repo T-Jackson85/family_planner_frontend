@@ -1,38 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
+import api from "./api/api"
 
-const MemberList = () => {
+const MemberList = ({ userId }) => {
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/users');
-        const data = await response.json();
-        setMembers(data);
+        // Fetch groups the user is part of
+        const response = await api.get('http://localhost:5000/api/groups');
+        const userGroups = response.data.filter((group) =>
+          group.users.some((user) => user.id === userId)
+        );
+
+        // Extract unique members from all groups
+        const uniqueMembers = Array.from(
+          new Map(
+            userGroups
+              .flatMap((group) => group.users)
+              .map((user) => [user.id, user]) // Map user.id to user object to remove duplicates
+          ).values()
+        );
+
+        setMembers(uniqueMembers);
       } catch (err) {
-        console.error("Error fetching members:", err);
+        console.error('Error fetching members:', err);
       }
     };
 
     fetchMembers();
-  }, []);
+  }, [userId]);
 
   return (
-    <ul className="member-list" style={styles.list}>
+    <ul style={styles.list}>
       {members.map((user) => (
         <li key={user.id} style={styles.item}>
           {/* Link wrapping the avatar */}
-          <Link to={`/profile/${user.id}`} style={styles.link}>
-            <img
-              src={user.avatar || '/default-avatar.png'}
-              alt={user.name || "User Avatar"}
-              style={styles.avatar}
-            />
+          <Link to={`/userprofile/${user.id}`} style={styles.link}>
+            <Avatar
+              alt={user.firstName || 'Unknown User'}
+              src={user.avatar || ''}
+              sx={{ width: 80, height: 80 }}
+            >
+              {(!user.avatar && user.firstName) ? user.firstName[0].toUpperCase() : ''}
+            </Avatar>
           </Link>
           {/* Link wrapping the user's name */}
-          <Link to={`/profile/${user.id}`} style={styles.nameLink}>
-            {user.name || "Unknown User"}
+          <Link to={`/userprofile/${user.id}`} style={styles.nameLink}>
+            {user.firstName || 'Unknown User'}
           </Link>
         </li>
       ))}
@@ -42,37 +59,30 @@ const MemberList = () => {
 
 const styles = {
   list: {
-    listStyle: "none",
+    listStyle: 'none',
     padding: 0,
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "15px",
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '15px',
   },
   item: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    textAlign: "center",
-    width: "120px",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    width: '120px',
   },
   link: {
-    textDecoration: "none",
-    color: "inherit",
-  },
-  avatar: {
-    width: "80px",
-    height: "80px",
-    borderRadius: "50%",
-    objectFit: "cover",
-    cursor: "pointer",
-    border: "2px solid #ddd",
+    textDecoration: 'none',
+    color: 'inherit',
   },
   nameLink: {
-    marginTop: "8px",
-    color: "#007bff",
-    textDecoration: "none",
-    fontSize: "14px",
+    marginTop: '8px',
+    color: '#007bff',
+    textDecoration: 'none',
+    fontSize: '14px',
   },
 };
 
 export default MemberList;
+

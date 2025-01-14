@@ -20,7 +20,9 @@ import LoginPage from "./LoginPage";
 import Homepage from "./homepage";
 import SignUpPage from "./SignUpPage";
 import UserProfile from './UserProfile'; // Component for the user profile page
-
+import InboxPage from "./InboxPage";
+import MyEventsPage from "./MyEventsPage";
+import MyGroupPage from "./MyGroupPage";
 
 function App() {
   return (
@@ -50,7 +52,13 @@ function App() {
         <Route path="/users/login" element={<LoginPage />} />
         <Route path="/profile/:id" element={<Homepage />} />
         <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/profile/:id" element={<UserProfile />} />
+        <Route path="/userprofile/:id" element={<UserProfile />} />
+        <Route path="/groups/new" element={<GroupForm />} />
+        <Route path="/groups" element={<GroupsList />} />
+        <Route path="/homepage" element={<Homepage />} />
+        <Route path="/inbox" element={<InboxPage />} />
+        <Route path="/events/mine" element={<MyEventsPage />} />
+        <Route path="/groups/mine" element={<MyGroupPage />} />
       </Routes>
     </Router>
   );

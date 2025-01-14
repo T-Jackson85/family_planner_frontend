@@ -1,153 +1,108 @@
-/* General Styles */
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f0f2f5; /* Facebook-like background */
-  color: #1c1e21;
-}
-
-.homepage {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* Header */
-.homepage-header {
-  background-color: #4267B2; /* Facebook blue */
-  color: #fff;
+/* Navbar Styles */
+.homepage-navbar {
+  background-color: #00509e;
+  color: white;
   padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.homepage-header h1 {
-  margin: 0;
-  font-size: 24px;
-  letter-spacing: 1px;
+.navbar-links {
+  display: flex;
+  gap: 15px;
 }
 
-/* Content Layout */
+.search-bar {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.navbar-link {
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  background-color: #007bff;
+  border-radius: 4px;
+}
+
+.navbar-link:hover {
+  background-color: #0056b3;
+}
+
+.logout-button {
+  padding: 6px 10px;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.logout-button:hover {
+  background-color: #d9363e;
+}
+
+/* Layout */
 .homepage-content {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Main content + Sidebar */
+  grid-template-columns: 3fr 1fr; /* Wider calendar section */
   gap: 20px;
   padding: 20px;
 }
 
-/* Calendar Section */
 .calendar-section {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: white;
   padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   text-align: center;
 }
 
 .calendar-section h2 {
-  font-size: 20px;
+  font-size: 1.5em;
   margin-bottom: 15px;
-  color: #4b4f56;
 }
 
-.react-calendar {
-  border: none;
-  width: 100%;
-  margin: auto;
+.calendar-section .react-calendar {
+  width: 100%; /* Make the calendar fill the container */
+  max-width: 300px; /* Ensure a maximum size for larger screens */
+  margin: 0 auto; /* Center the calendar */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+ .calendar-section .react-calendar__tile {
+  font-size: 1.2em; /* Increase font size for better readability */
+   height: 60px; /*Make calendar tiles larger  */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.calendar-section .react-calendar__tile--active {
+  background-color: #00509e;
+  color: white;
+  border-radius: 50%;
+} */
 
 .calendar-event-indicator {
   display: inline-block;
   width: 8px;
   height: 8px;
+  background-color: #ff4d4f;
   border-radius: 50%;
-  background-color: #00bcd4; /* Highlight for events */
   margin-top: 5px;
 }
 
-.view-events-link {
-  display: block;
-  margin-top: 15px;
-  color: #4267B2;
-  text-decoration: none;
-  font-weight: bold;
-}
 
-.view-events-link:hover {
-  text-decoration: underline;
-}
-
-/* Sidebar Section */
-.tasks-section, .expense-tracker-section, .member-list-section {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-.tasks-section h2,
-.expense-tracker-section h2,
-.member-list-section h2 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #4b4f56;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 5px;
-}
-
-.tasks-section p {
-  font-style: italic;
-  color: #888;
-  text-align: center;
-}
-
-.member-list-section .member-list {
+/* Sidebar */
+.sidebar {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
-.member-list li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
-.member-list img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ddd;
-}
-
-.member-list a {
-  text-decoration: none;
-  color: #4267B2;
-  font-size: 14px;
-}
-
-.member-list a:hover {
-  text-decoration: underline;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .homepage-content {
-    grid-template-columns: 1fr;
-  }
-
-  .calendar-section {
-    order: 1;
-  }
-
-  .tasks-section,
-  .expense-tracker-section,
-  .member-list-section {
-    order: 2;
-  }
-}
