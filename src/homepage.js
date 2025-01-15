@@ -18,6 +18,7 @@ import {
   Paper,
   CircularProgress,
   Container,
+  Menu, MenuItem
 } from "@mui/material";
 
 // Custom Components
@@ -40,6 +41,13 @@ const Homepage = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+
+
+ const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+
 
   // Rest of your code remains unchanged
 
@@ -94,8 +102,43 @@ const Homepage = () => {
       setMessage("Error fetching data for the selected date. Please try again.");
     }
   };
-  
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
 
+    try {
+      const response = await api.get(`/groups/search`, {
+        params: { query: searchQuery },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setSearchResults(response.data);
+      setAnchorEl(document.getElementById("search-input")); // Attach dropdown to the input field
+    } catch (error) {
+      console.error("Error searching groups:", error);
+    }
+  };
+
+  const handleJoinRequest = async (groupId) => {
+    try {
+      await api.post(
+        `/groups/${groupId}/join`,
+        {},
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      alert("Request to join group sent successfully!");
+      setSearchQuery("");
+      setSearchResults([]);
+      setAnchorEl(null); // Close dropdown after join
+    } catch (error) {
+      console.error("Error sending join request:", error);
+      alert("Failed to send join request.");
+    }
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSearchResults([]);
+  };
+  
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
 
@@ -116,6 +159,7 @@ const Homepage = () => {
       console.error("Error posting comment:", error);
     }
   };
+  
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -136,40 +180,88 @@ const Homepage = () => {
     <Box sx={{ minHeight: "100vh", bgcolor: "#f9f9f9" }}>
       {/* Navbar */}
       <AppBar position="static" color="primary">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            FamLink
-          </Typography>
-          {user && (
-            <Typography sx={{ marginRight: 2 }}>
-              Welcome, {user.firstName} {user.lastName}!
-            </Typography>
-          )}
-          <TextField
-            placeholder="Search..."
-            size="small"
-            sx={{ bgcolor: "#fff", borderRadius: 1, marginRight: 2 }}
-          />
-          <Button color="inherit" component={Link} to="/groups/new">
-            Create Group
-          </Button>
-          <Button color="inherit" component={Link} to="/groups/mine">
-            My Group
-          </Button>
-          <Button color="inherit" component={Link} to="/events/new">
-            Create Event
-          </Button>
-          <Button color="inherit" component={Link} to="/inbox">
-            My Inbox
-            </Button>
-            <Button color="inherit" component={Link} to="/events/mine">
-             My Events
-             </Button>
-          <Button color="inherit" onClick={handleLogout}>
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+  <Toolbar>
+    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+      FamLink
+    </Typography>
+    {user && (
+      <Typography sx={{ marginRight: 2 }}>
+        Welcome, {user.firstName} {user.lastName}!
+      </Typography>
+    )}
+    <TextField
+        id="search-input"
+        placeholder="Search Groups..."
+        size="small"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onKeyPress={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
+        sx={{ bgcolor: "#fff", borderRadius: 1, marginRight: 2 }}
+      />
+      <Button
+        variant="contained"
+        size="small"
+        onClick={handleSearch}
+        sx={{ marginLeft: 1 }}
+      >
+        Search
+      </Button>
+
+      {/* Dropdown Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl) && searchResults.length > 0}
+        onClose={handleClose}
+        sx={{ mt: 1 }}
+      >
+        {searchResults.map((group) => (
+          <MenuItem key={group.id}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+              <Typography>{group.name}</Typography>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => handleJoinRequest(group.id)}
+              >
+                Join
+              </Button>
+            </Box>
+          </MenuItem>
+        ))}
+        {searchResults.length === 0 && (
+          <MenuItem>
+            <Typography>No groups found.</Typography>
+          </MenuItem>
+        )}
+      </Menu>
+    <Button color="inherit" component={Link} to="/groups/new">
+      Create Group
+    </Button>
+    <Button color="inherit" component={Link} to="/groups/mine">
+      My Group
+    </Button>
+    <Button color="inherit" component={Link} to="/events/new">
+      Create Event
+    </Button>
+    <Button color="inherit" component={Link} to="/inbox">
+      My Inbox
+    </Button>
+    <Button color="inherit" component={Link} to="/events/mine">
+      My Events
+    </Button>
+    <Button color="inherit" component={Link} to="/profile">
+      Profile
+    </Button> {/* New Profile button */}
+    <Button color="inherit" onClick={handleLogout}>
+      Logout
+    </Button>
+  </Toolbar>
+</AppBar>
+
 
       {/* Main Content */}
       <Container sx={{ paddingY: 4 }}>

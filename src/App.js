@@ -23,6 +23,8 @@ import UserProfile from './UserProfile'; // Component for the user profile page
 import InboxPage from "./InboxPage";
 import MyEventsPage from "./MyEventsPage";
 import MyGroupPage from "./MyGroupPage";
+import GroupSearch from "./GroupSearch";
+import EditEventPage from "./EditEventPage";
 
 function App() {
   return (
@@ -53,12 +55,15 @@ function App() {
         <Route path="/profile/:id" element={<Homepage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/userprofile/:id" element={<UserProfile />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route path="/groups/new" element={<GroupForm />} />
         <Route path="/groups" element={<GroupsList />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/inbox" element={<InboxPage />} />
         <Route path="/events/mine" element={<MyEventsPage />} />
         <Route path="/groups/mine" element={<MyGroupPage />} />
+        <Route path="/groups/search" element={<GroupSearch />} />
+        <Route path="/events/edit/:id" element={<EditEventPage />} />
       </Routes>
     </Router>
   );

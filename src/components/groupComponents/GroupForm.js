@@ -14,13 +14,13 @@ const GroupForm = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Listen for any real-time notifications
-    socket.on("group-invite", (data) => {
-      console.log("Group invite notification:", data);
+    // Listen for real-time notifications
+    socket.on("new-message", (data) => {
+      console.log("New message notification:", data);
     });
 
     return () => {
-      socket.off("group-invite"); // Cleanup on unmount
+      socket.off("new-message"); // Cleanup on unmount
     };
   }, []);
 
@@ -31,25 +31,55 @@ const GroupForm = () => {
     }
   };
 
+  const handleSendInvite = async (inviteEmail) => {
+    try {
+      // Fetch the receiver's user ID based on their email
+      const { data: receiver } = await api.get(`/users/email/${inviteEmail}`);
+      if (!receiver || !receiver.id) {
+        throw new Error("User not found");
+      }
+
+      // Send a message to the receiver
+      const response = await api.post(
+        "/messages",
+        {
+          receiverId: receiver.id,
+          content: `You have been invited to join the group: ${name}`,
+        },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+
+      // Emit a real-time event to notify the invited user
+      socket.emit("new-message", {
+        receiverId: receiver.id,
+        content: response.data.content,
+        createdAt: response.data.createdAt,
+      });
+
+      console.log("Invite sent successfully:", response.data);
+    } catch (error) {
+      console.error("Error sending invite:", error);
+      setError("Failed to send invite. Please try again.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Create the group
       const response = await api.post("/groups", { name, invites });
       if (response.data) {
-        // Emit a real-time event to notify the invited users
+        // Send invites to all users
         invites.forEach((inviteEmail) => {
-          socket.emit("sendGroupInvite", {
-            groupName: name,
-            groupId: response.data.id,
-            email: inviteEmail,
-          });
+          handleSendInvite(inviteEmail);
         });
 
-        navigate(`/groups/mine`); // Redirect to user's groups
+        navigate("/groups/mine"); // Redirect to user's groups
       } else {
         throw new Error("Failed to create group");
       }
     } catch (err) {
+      console.error(err);
       setError("Error creating group. Please try again.");
     }
   };
@@ -94,5 +124,6 @@ const GroupForm = () => {
 };
 
 export default GroupForm;
+
 
 

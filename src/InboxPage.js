@@ -1,40 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Paper, Button, List, ListItem, ListItemText } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import api from "./api/api"; // Use your Axios instance
+import api from "./api/api";
 
 const InboxPage = () => {
-  const [requests, setRequests] = useState([]); // State to store requests
-  const navigate = useNavigate();
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const fetchRequests = async () => {
+    const fetchMessages = async () => {
       try {
-        const response = await api.get('/groups/requests', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        const response = await api.get("/messages/inbox", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        setRequests(response.data);
+        setMessages(response.data); // Set fetched messages
       } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setRequests([]); // Handle no requests gracefully
-        } else {
-          console.error('Error fetching requests:', error);
-        }
+        console.error("Error fetching inbox messages:", error);
       }
     };
 
-    fetchRequests();
-  }, []); // Run on component mount
+    fetchMessages();
+  }, []);
 
-  const handleRequestAction = async (requestId, action) => {
+  const handleInviteAction = async (groupId, messageId, status) => {
     try {
-      await api.put(`/groups/requests/${requestId}`, { status: action });
-      setRequests(requests.filter((request) => request.id !== requestId)); // Remove handled request
+      await api.put(
+        `/groups/${groupId}/join`,
+        { status },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setMessages(messages.filter((msg) => msg.id !== messageId)); // Remove the handled invite
+      alert(`Invite ${status.toLowerCase()} successfully.`);
     } catch (error) {
-      console.error("Error updating request:", error);
+      console.error("Error handling invite:", error);
+      alert("Failed to handle invite. Please try again.");
     }
   };
-
+  
   return (
     <Box sx={{ padding: 4 }}>
       <Paper elevation={3} sx={{ padding: 3 }}>
@@ -42,47 +44,44 @@ const InboxPage = () => {
           My Inbox
         </Typography>
 
-        {requests.length === 0 ? (
+        {messages.length === 0 ? (
           <Typography variant="body1" color="textSecondary">
-            No messages
+            No messages in your inbox.
           </Typography>
         ) : (
           <List>
-            {requests.map((request) => (
-              <ListItem key={request.id}>
+            {messages.map((message) => (
+              <ListItem key={message.id} sx={{ display: "flex", justifyContent: "space-between" }}>
                 <ListItemText
-                  primary={`${request.group.name} - ${request.user.firstName} ${request.user.lastName}`}
-                  secondary={`Request: ${request.status}`}
+                  primary={`${message.sender.firstName} ${message.sender.lastName}`}
+                  secondary={message.content}
                 />
-                <Button
-                  onClick={() => handleRequestAction(request.id, "APPROVED")}
-                  color="success"
-                  sx={{ marginRight: 1 }}
-                >
-                  Approve
-                </Button>
-                <Button
-                  onClick={() => handleRequestAction(request.id, "REJECTED")}
-                  color="error"
-                >
-                  Reject
-                </Button>
+                {message.content.includes("You have been invited to join the group") && (
+                  <>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() => handleInviteAction(message.id, "APPROVED")}
+                    >
+                      Accept
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleInviteAction(message.id, "REJECTED")}
+                    >
+                      Reject
+                    </Button>
+                  </>
+                )}
               </ListItem>
             ))}
           </List>
         )}
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate("/homepage")}
-          sx={{ marginTop: 2 }}
-        >
-          Return Home
-        </Button>
       </Paper>
     </Box>
   );
 };
 
 export default InboxPage;
+
