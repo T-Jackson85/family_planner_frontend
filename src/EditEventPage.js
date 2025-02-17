@@ -20,7 +20,7 @@ const EditEventPage = () => {
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        const response = await api.get(`/events/${id}`, {
+        const response = await api.get(`http://localhost:5000/api/events/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setEventDetails({

@@ -23,8 +23,9 @@ import UserProfile from './UserProfile'; // Component for the user profile page
 import InboxPage from "./InboxPage";
 import MyEventsPage from "./MyEventsPage";
 import MyGroupPage from "./MyGroupPage";
-import GroupSearch from "./GroupSearch";
 import EditEventPage from "./EditEventPage";
+import GroupJoinPage from "./GroupJoinPage";
+import MemberProfile from "./MemberProfile"; // Import the MemberProfile component
 
 function App() {
   return (
@@ -62,8 +63,10 @@ function App() {
         <Route path="/inbox" element={<InboxPage />} />
         <Route path="/events/mine" element={<MyEventsPage />} />
         <Route path="/groups/mine" element={<MyGroupPage />} />
-        <Route path="/groups/search" element={<GroupSearch />} />
         <Route path="/events/edit/:id" element={<EditEventPage />} />
+        <Route path="/groups/:groupId/join" element={<GroupJoinPage />} />;
+        <Route path="/memberprofile/:userId" element={<MemberProfile />} />
+        <Route path="/memberprofile/:userId" element={<MemberProfile />} />
       </Routes>
     </Router>
   );

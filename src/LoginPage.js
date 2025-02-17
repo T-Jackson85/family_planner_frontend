@@ -3,32 +3,35 @@ import { useNavigate } from "react-router-dom";
 import api from "./api/api"; // Import the customized Axios instance
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleLogin = async () => {
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      const { accessToken, refreshToken, user } = response.data;
+
+      // Save tokens and user details in localStorage
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user)); // Store user details, including groups
+
+      // Log groupIds to verify they are stored
+      console.log(user.groupIds); // Array of group IDs
+
+      navigate("/homepage"); // Redirect to the homepage
+    } catch (error) {
+      console.error("Login error:", error);
+      setError(error.response?.data?.message || "Login failed. Please try again.");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-
-    try {
-      const response = await api.post("/auth/login", formData); // Use the `api` instance
-      const { accessToken, refreshToken } = response.data;
-
-      // Save tokens and expiry in localStorage
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("tokenExpiry", Date.now() + 15 * 60 * 1000); // 15 minutes expiry
-
-      navigate("/homepage"); // Redirect to homepage
-    } catch (err) {
-      setError(err.response?.data?.message || "An error occurred. Please try again.");
-    }
+    setError(null); // Clear previous errors
+    await handleLogin(); // Call the login function
   };
 
   return (
@@ -39,9 +42,8 @@ const LoginPage = () => {
           Email:
           <input
             type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
             required
           />
@@ -50,15 +52,16 @@ const LoginPage = () => {
           Password:
           <input
             type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             style={styles.input}
             required
           />
         </label>
         {error && <p style={styles.error}>{error}</p>}
-        <button type="submit" style={styles.button}>Log In</button>
+        <button type="submit" style={styles.button}>
+          Log In
+        </button>
       </form>
       <p style={styles.toggleText}>
         Don't have an account?{" "}

@@ -10,7 +10,7 @@ const GroupProfilePage = () => {
   useEffect(() => {
     const fetchGroup = async () => {
       try {
-        const response = await api.get(`/groups/${groupId}`, {
+        const response = await api.get(`http://localhost:5000/api/groups/${groupId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setGroup(response.data);
@@ -26,7 +26,7 @@ const GroupProfilePage = () => {
   const handleJoinRequest = async () => {
     try {
       await api.post(
-        `/groups/${groupId}/join`,
+        `http://localhost:5000/api/groups/${groupId}/join`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

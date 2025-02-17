@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { Box, Typography, Button, AppBar, Toolbar} from "@mui/material";
 import dayjs from "dayjs";
 import api from "../../api/api";
 import "./EventForm.css"; // For custom styles
@@ -12,15 +13,16 @@ const EventForm = () => {
     title: "",
     date: "",
     location: "",
-    groupName: "",
     description: "",
     tasks: "",
     expenses: [],
   });
 
+  const [groupName, setGroupName] = useState("");
   const [newExpense, setNewExpense] = useState({ description: "", amount: "" });
 
   useEffect(() => {
+    // Fetch event data if editing
     if (id) {
       const fetchEvent = async () => {
         try {
@@ -30,17 +32,33 @@ const EventForm = () => {
             title: data.title,
             date: dayjs(data.date).format("YYYY-MM-DDTHH:mm"),
             location: data.location,
-            groupName: data.group?.name || "",
             description: data.description || "",
             tasks: data.tasks.map((task) => task.title).join("\n"),
             expenses: data.expenses || [],
           });
+          setGroupName(data.group?.name || "");
         } catch (error) {
           console.error("Error fetching event:", error);
         }
       };
 
       fetchEvent();
+    } else {
+      // Fetch the user's group for a new event
+      const fetchGroup = async () => {
+        try {
+          const response = await api.get("http://localhost:5000/api/auth/me", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          });
+          if (response.data) {
+            setGroupName(response.data.name);
+          }
+        } catch (error) {
+          console.error("Error fetching group:", error);
+        }
+      };
+
+      fetchGroup();
     }
   }, [id]);
 
@@ -81,7 +99,6 @@ const EventForm = () => {
       date: new Date(event.date).toISOString(),
       location: event.location,
       description: event.description,
-      groupId: event.groupName ? await getGroupId(event.groupName) : null,
       tasks: event.tasks.split("\n").map((taskTitle) => ({
         title: taskTitle.trim(),
         status: "TODO", // Default status
@@ -106,25 +123,44 @@ const EventForm = () => {
       alert("An error occurred while saving the event.");
     }
   };
-
-  const getGroupId = async (groupName) => {
-    try {
-      const response = await api.get(`http://localhost:5000/api/groups`, {
-        params: { name: groupName },
-      });
-      if (response.data.length > 0) {
-        return response.data[0].id;
-      } else {
-        const newGroup = await api.post(`http://localhost:5000/api/groups`, { name: groupName });
-        return newGroup.data.id;
-      }
-    } catch (error) {
-      console.error("Error fetching or creating group:", error);
-      return null;
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/users/login");
   };
 
   return (
+    <Box sx={{ minHeight: "100vh", bgcolor: "#f9f9f9" }} >
+    {/* Navbar */}
+    <AppBar position="static" color="primary">
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          FamLink
+        </Typography>
+
+        <Button color="inherit" component={Link} to="/groups/new">
+          Create Group
+        </Button>
+        <Button color="inherit" component={Link} to="/groups/mine">
+          My Group
+        </Button>
+        <Button color="inherit" component={Link} to="/events/new">
+          Create Event
+        </Button>
+        <Button color="inherit" component={Link} to="/inbox">
+          My Inbox
+        </Button>
+        <Button color="inherit" component={Link} to="/events/mine">
+          My Events
+        </Button>
+        <Button color="inherit" component={Link} to="/profile">
+          Profile
+        </Button>
+        <Button color="inherit" onClick={handleLogout}>
+          Logout
+        </Button>
+      </Toolbar>
+    </AppBar> 
     <div className="event-form-container">
       <h1>{id ? "Edit Event" : "Create Event"}</h1>
       <form onSubmit={handleSubmit}>
@@ -142,7 +178,7 @@ const EventForm = () => {
         </div>
         <div className="form-group">
           <label>Group Name:</label>
-          <input type="text" name="groupName" value={event.groupName} onChange={handleChange} />
+          <input type="text" value={groupName} readOnly />
         </div>
         <div className="form-group">
           <label>Description:</label>
@@ -186,9 +222,8 @@ const EventForm = () => {
         </div>
       </form>
     </div>
+   </Box> 
   );
 };
 
 export default EventForm;
-
-
