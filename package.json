@@ -13,6 +13,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "depcheck": "^1.4.7",
+    "eslint-config-react-app": "^7.0.1",
     "jest": "^27.5.1",
     "lucide-react": "^0.469.0",
     "multer": "^1.4.5-lts.1",
@@ -21,7 +23,7 @@
     "react-color": "^2.19.3",
     "react-dom": "^17.0.0 || ^18.0.0 || ^19.0.0",
     "react-router-dom": "^7.1.5",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^3.0.1",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
@@ -55,11 +57,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "jest": {
-    "moduleNameMapper": {
-      "^react-router-dom$": "<rootDir>/node_modules/react-router-dom"
-    }
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
